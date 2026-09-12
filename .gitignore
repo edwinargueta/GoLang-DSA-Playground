@@ -1,0 +1,29 @@
+# Binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+bin/
+dist/
+
+# Test binaries and coverage output
+*.test
+*.out
+coverage.out
+coverage.html
+
+# Go workspace files
+go.work
+go.work.sum
+
+# Vendored dependencies
+vendor/
+
+# Editors
+.vscode/
+.idea/
+*.swp
+
+# macOS
+.DS_Store
