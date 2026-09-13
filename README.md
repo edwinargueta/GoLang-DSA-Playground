@@ -93,7 +93,8 @@ GoLang-DSA-Playground/
 | Structure | Status | Key operations |
 |---|---|---|
 | Binary Search Tree | ⚪ Planned | insert, contains, delete, traversals, height, validation |
-| Linked List | ⚪ Planned | singly and doubly linked, reversal, cycle detection |
+| Singly Linked List | 🟢 Complete | append, prepend, indexed insert/remove, reversal, cycle detection |
+| Doubly Linked List | ⚪ Planned | head and tail pointers, O(1) pop at both ends, reverse traversal |
 | Stack & Queue | ⚪ Planned | slice- and node-backed, min-stack |
 | Hash Table | ⚪ Planned | separate chaining, open addressing, resize |
 | Heap / Priority Queue | ⚪ Planned | sift up/down, heapify, k-largest |
@@ -105,10 +106,62 @@ GoLang-DSA-Playground/
 
 ---
 
-## Running the code
+## Prerequisites
 
-Requires Go 1.21 or newer — `cmp.Ordered` and the `slices` package both landed in
-1.21. No third-party dependencies.
+**Go 1.21 or newer** is the only hard requirement — `cmp.Ordered` and the `slices`
+package both landed in 1.21. There are no third-party dependencies, so there is
+nothing to fetch and no `go.sum` to reconcile.
+
+### Installing the toolchain
+
+| Platform | How |
+|---|---|
+| macOS (Homebrew) | `brew install go` |
+| Linux (Debian/Ubuntu) | `sudo apt install golang-go` — check the version, distro packages lag |
+| Any platform | Download the installer from [go.dev/dl](https://go.dev/dl/) |
+
+The official package is the shortest path if you don't already run Homebrew. On
+macOS pick the **`darwin-arm64`** build for Apple Silicon (`darwin-amd64` for
+Intel); it installs to `/usr/local/go` and puts `go` on the `PATH` of every new
+terminal.
+
+Installing Homebrew first is worth it only if you want the rest of its ecosystem:
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
+It asks for your login password, and on Apple Silicon it installs to `/opt/homebrew`
+and prints a `brew shellenv` line to append to `~/.zprofile`. Skipping that line is
+the usual reason `brew: command not found` survives an otherwise successful install.
+
+### Verifying
+
+```bash
+go version              # go1.21 or newer
+go env GOROOT GOPATH    # GOPATH/bin is where `go install` drops binaries
+```
+
+Everything the ground rules ask for — `go build`, `go test`, `go vet`, `gofmt` —
+ships with the toolchain. There is no separate test runner, linter, or formatter to
+install.
+
+### Optional tooling
+
+| Tool | Install | Why |
+|---|---|---|
+| `gopls` | editor prompt | Language server: completion, jump-to-definition, inline vet errors |
+| `dlv` | editor prompt | Debugger — stepping through a rotation beats `fmt.Println` |
+| `gh` | `brew install gh` | GitHub CLI, for cloning and pull requests without the browser |
+
+In VS Code, install the **Go extension** (`golang.Go`) and accept its offer to set up
+`gopls` and `dlv` — both land in `$GOPATH/bin`. Turn on format-on-save while you are
+there: `gofmt -l .` printing nothing is a standing requirement in this repo, and an
+editor enforces it more reliably than memory does.
+
+---
+
+## Running the code
 
 ```bash
 git clone git@github.com:edwinargueta/GoLang-DSA-Playground.git
