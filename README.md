@@ -92,7 +92,7 @@ GoLang-DSA-Playground/
 
 | Structure | Status | Key operations |
 |---|---|---|
-| Binary Search Tree | ⚪ Planned | insert, contains, delete, traversals, height, validation |
+| Binary Search Tree | 🟢 Complete | insert, contains, delete, min/max, four traversals, height, validation |
 | Singly Linked List | 🟢 Complete | append, prepend, indexed insert/remove, reversal, cycle detection |
 | Doubly Linked List | 🟢 Complete | head and tail pointers, O(1) pop at both ends, reverse traversal |
 | Stack & Queue | ⚪ Planned | slice- and node-backed, min-stack |
