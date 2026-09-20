@@ -95,7 +95,8 @@ GoLang-DSA-Playground/
 | Binary Search Tree | 🟢 Complete | insert, contains, delete, min/max, four traversals, height, validation |
 | Singly Linked List | 🟢 Complete | append, prepend, indexed insert/remove, reversal, cycle detection |
 | Doubly Linked List | 🟢 Complete | head and tail pointers, O(1) pop at both ends, reverse traversal |
-| Stack & Queue | ⚪ Planned | slice- and node-backed, min-stack |
+| Stack | 🟡 In progress | slice- and node-backed, min-stack |
+| Queue | 🟡 In progress | ring buffer, node-backed with head and tail |
 | Hash Table | ⚪ Planned | separate chaining, open addressing, resize |
 | Heap / Priority Queue | ⚪ Planned | sift up/down, heapify, k-largest |
 | Graph | ⚪ Planned | BFS, DFS, topological sort, Dijkstra |
