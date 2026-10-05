@@ -1,6 +1,10 @@
 package stack
 
-import "cmp"
+import (
+	"cmp"
+	"fmt"
+	"strings"
+)
 
 // MinStack is a slice-backed stack that also answers "what is the smallest value you
 // hold" in constant time, by keeping a second stack of running minima alongside the
@@ -33,50 +37,80 @@ type MinStack[T cmp.Ordered] struct {
 
 // NewMin returns an empty minimum-tracking stack. O(1) time, O(1) space.
 func NewMin[T cmp.Ordered]() *MinStack[T] {
-	panic("not implemented")
+	return &MinStack[T]{}
 }
 
 // Len returns the number of elements. O(1) time, O(1) space.
 func (s *MinStack[T]) Len() int {
-	panic("not implemented")
+	return len(s.values)
 }
 
 // IsEmpty reports whether the stack holds no elements. O(1) time, O(1) space.
 func (s *MinStack[T]) IsEmpty() bool {
-	panic("not implemented")
+	return len(s.values) == 0
 }
 
 // Push adds value at the top. O(1) amortized time, O(1) space.
 func (s *MinStack[T]) Push(value T) {
-	panic("not implemented")
+	lowest := value
+	if n := len(s.mins); n > 0 {
+		lowest = min(value, s.mins[n-1])
+	}
+	s.values = append(s.values, value)
+	s.mins = append(s.mins, lowest)
 }
 
 // Pop removes and returns the top, zeroing the slots it vacates; ErrEmptyStack if empty. O(1) time, O(1) space.
 func (s *MinStack[T]) Pop() (T, error) {
-	panic("not implemented")
+	var zero T
+	if len(s.values) == 0 {
+		return zero, ErrEmptyStack
+	}
+	last := len(s.values) - 1
+	value := s.values[last]
+	s.values[last] = zero
+	s.mins[last] = zero
+	s.values = s.values[:last]
+	s.mins = s.mins[:last]
+	return value, nil
 }
 
 // Peek returns the top without removing it; ErrEmptyStack if empty. O(1) time, O(1) space.
 func (s *MinStack[T]) Peek() (T, error) {
-	panic("not implemented")
+	if len(s.values) == 0 {
+		var zero T
+		return zero, ErrEmptyStack
+	}
+	return s.values[len(s.values)-1], nil
 }
 
 // Min returns the smallest value the stack holds; ErrEmptyStack if empty. O(1) time, O(1) space.
 func (s *MinStack[T]) Min() (T, error) {
-	panic("not implemented")
+	if len(s.mins) == 0 {
+		var zero T
+		return zero, ErrEmptyStack
+	}
+	return s.mins[len(s.mins)-1], nil
 }
 
 // ToSlice returns the values bottom to top, empty and non-nil for an empty stack. O(n) time, O(n) space.
 func (s *MinStack[T]) ToSlice() []T {
-	panic("not implemented")
+	values := make([]T, len(s.values))
+	copy(values, s.values)
+	return values
 }
 
 // String renders the stack top first as "30 -> 20 -> 10 -> nil". O(n) time, O(n) space.
 func (s *MinStack[T]) String() string {
-	panic("not implemented")
+	var b strings.Builder
+	for i := len(s.values) - 1; i >= 0; i-- {
+		fmt.Fprintf(&b, "%v -> ", s.values[i])
+	}
+	b.WriteString("nil")
+	return b.String()
 }
 
 // PrintStack writes String followed by a newline to standard output. O(n) time, O(n) space.
 func (s *MinStack[T]) PrintStack() {
-	panic("not implemented")
+	fmt.Println(s.String())
 }

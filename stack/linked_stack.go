@@ -1,5 +1,10 @@
 package stack
 
+import (
+	"fmt"
+	"strings"
+)
+
 // LinkedStack is a last-in-first-out collection backed by a chain of nodes, with top
 // pointing at the most recently pushed one and every node pointing at the cell
 // beneath it.
@@ -28,45 +33,69 @@ type LinkedStack[T any] struct {
 
 // NewLinked returns an empty node-backed stack. O(1) time, O(1) space.
 func NewLinked[T any]() *LinkedStack[T] {
-	panic("not implemented")
+	return &LinkedStack[T]{}
 }
 
 // Len returns the number of elements. O(1) time, O(1) space.
 func (s *LinkedStack[T]) Len() int {
-	panic("not implemented")
+	return s.size
 }
 
 // IsEmpty reports whether the stack holds no elements. O(1) time, O(1) space.
 func (s *LinkedStack[T]) IsEmpty() bool {
-	panic("not implemented")
+	return s.size == 0
 }
 
 // Push adds value at the top. O(1) time, O(1) space.
 func (s *LinkedStack[T]) Push(value T) {
-	panic("not implemented")
+	s.top = &node[T]{value: value, next: s.top}
+	s.size++
 }
 
 // Pop removes and returns the top; ErrEmptyStack if empty. O(1) time, O(1) space.
 func (s *LinkedStack[T]) Pop() (T, error) {
-	panic("not implemented")
+	if s.top == nil {
+		var zero T
+		return zero, ErrEmptyStack
+	}
+	popped := s.top
+	s.top = popped.next
+	popped.next = nil
+	s.size--
+	return popped.value, nil
 }
 
 // Peek returns the top without removing it; ErrEmptyStack if empty. O(1) time, O(1) space.
 func (s *LinkedStack[T]) Peek() (T, error) {
-	panic("not implemented")
+	if s.top == nil {
+		var zero T
+		return zero, ErrEmptyStack
+	}
+	return s.top.value, nil
 }
 
 // ToSlice returns the values bottom to top, empty and non-nil for an empty stack. O(n) time, O(n) space.
 func (s *LinkedStack[T]) ToSlice() []T {
-	panic("not implemented")
+	values := make([]T, s.size)
+	i := s.size - 1
+	for n := s.top; n != nil; n = n.next {
+		values[i] = n.value
+		i--
+	}
+	return values
 }
 
 // String renders the stack top first as "30 -> 20 -> 10 -> nil". O(n) time, O(n) space.
 func (s *LinkedStack[T]) String() string {
-	panic("not implemented")
+	var b strings.Builder
+	for n := s.top; n != nil; n = n.next {
+		fmt.Fprintf(&b, "%v -> ", n.value)
+	}
+	b.WriteString("nil")
+	return b.String()
 }
 
 // PrintStack writes String followed by a newline to standard output. O(n) time, O(n) space.
 func (s *LinkedStack[T]) PrintStack() {
-	panic("not implemented")
+	fmt.Println(s.String())
 }

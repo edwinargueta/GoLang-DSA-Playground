@@ -1,7 +1,11 @@
 // Package queue implements FIFO queues from first principles, ring-backed and node-backed.
 package queue
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+	"strings"
+)
 
 var (
 	// ErrEmptyQueue is returned by any operation that needs an element and has none.
@@ -44,45 +48,81 @@ type Queue[T any] struct {
 
 // New returns an empty ring-backed queue. O(1) time, O(1) space.
 func New[T any]() *Queue[T] {
-	panic("not implemented")
+	return &Queue[T]{}
 }
 
 // Len returns the number of elements. O(1) time, O(1) space.
 func (q *Queue[T]) Len() int {
-	panic("not implemented")
+	return q.size
 }
 
 // IsEmpty reports whether the queue holds no elements. O(1) time, O(1) space.
 func (q *Queue[T]) IsEmpty() bool {
-	panic("not implemented")
+	return q.size == 0
 }
 
 // Enqueue adds value at the back, growing the ring if it is full. O(1) amortized time, O(1) space.
 func (q *Queue[T]) Enqueue(value T) {
-	panic("not implemented")
+	if q.size == len(q.items) {
+		q.grow()
+	}
+	q.items[(q.head+q.size)%len(q.items)] = value
+	q.size++
 }
 
 // Dequeue removes and returns the front, zeroing the slot it vacates; ErrEmptyQueue if empty. O(1) time, O(1) space.
 func (q *Queue[T]) Dequeue() (T, error) {
-	panic("not implemented")
+	if q.size == 0 {
+		var zero T
+		return zero, ErrEmptyQueue
+	}
+	var zero T
+	value := q.items[q.head]
+	q.items[q.head] = zero
+	q.head = (q.head + 1) % len(q.items)
+	q.size--
+	return value, nil
 }
 
 // Peek returns the front without removing it; ErrEmptyQueue if empty. O(1) time, O(1) space.
 func (q *Queue[T]) Peek() (T, error) {
-	panic("not implemented")
+	if q.size == 0 {
+		var zero T
+		return zero, ErrEmptyQueue
+	}
+	return q.items[q.head], nil
 }
 
 // ToSlice returns the values front to back, empty and non-nil for an empty queue. O(n) time, O(n) space.
 func (q *Queue[T]) ToSlice() []T {
-	panic("not implemented")
+	values := make([]T, q.size)
+	for i := range values {
+		values[i] = q.items[(q.head+i)%len(q.items)]
+	}
+	return values
 }
 
 // String renders the queue front first as "10 -> 20 -> 30 -> nil". O(n) time, O(n) space.
 func (q *Queue[T]) String() string {
-	panic("not implemented")
+	var b strings.Builder
+	for i := 0; i < q.size; i++ {
+		fmt.Fprintf(&b, "%v -> ", q.items[(q.head+i)%len(q.items)])
+	}
+	b.WriteString("nil")
+	return b.String()
 }
 
 // PrintQueue writes String followed by a newline to standard output. O(n) time, O(n) space.
 func (q *Queue[T]) PrintQueue() {
-	panic("not implemented")
+	fmt.Println(q.String())
+}
+
+// grow moves the live window to the front of a ring twice the size, minimum 4. O(n) time, O(n) space.
+func (q *Queue[T]) grow() {
+	items := make([]T, max(4, 2*len(q.items)))
+	for i := 0; i < q.size; i++ {
+		items[i] = q.items[(q.head+i)%len(q.items)]
+	}
+	q.items = items
+	q.head = 0
 }

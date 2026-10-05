@@ -1,7 +1,11 @@
 // Package stack implements LIFO stacks from first principles, slice-backed and node-backed.
 package stack
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+	"strings"
+)
 
 var (
 	// ErrEmptyStack is returned by any operation that needs an element and has none.
@@ -41,45 +45,64 @@ type Stack[T any] struct {
 
 // New returns an empty slice-backed stack. O(1) time, O(1) space.
 func New[T any]() *Stack[T] {
-	panic("not implemented")
+	return &Stack[T]{}
 }
 
 // Len returns the number of elements. O(1) time, O(1) space.
 func (s *Stack[T]) Len() int {
-	panic("not implemented")
+	return len(s.items)
 }
 
 // IsEmpty reports whether the stack holds no elements. O(1) time, O(1) space.
 func (s *Stack[T]) IsEmpty() bool {
-	panic("not implemented")
+	return len(s.items) == 0
 }
 
 // Push adds value at the top. O(1) amortized time, O(1) space.
 func (s *Stack[T]) Push(value T) {
-	panic("not implemented")
+	s.items = append(s.items, value)
 }
 
 // Pop removes and returns the top, zeroing the slot it vacates; ErrEmptyStack if empty. O(1) time, O(1) space.
 func (s *Stack[T]) Pop() (T, error) {
-	panic("not implemented")
+	var zero T
+	if len(s.items) == 0 {
+		return zero, ErrEmptyStack
+	}
+	last := len(s.items) - 1
+	value := s.items[last]
+	s.items[last] = zero
+	s.items = s.items[:last]
+	return value, nil
 }
 
 // Peek returns the top without removing it; ErrEmptyStack if empty. O(1) time, O(1) space.
 func (s *Stack[T]) Peek() (T, error) {
-	panic("not implemented")
+	if len(s.items) == 0 {
+		var zero T
+		return zero, ErrEmptyStack
+	}
+	return s.items[len(s.items)-1], nil
 }
 
 // ToSlice returns the values bottom to top, empty and non-nil for an empty stack. O(n) time, O(n) space.
 func (s *Stack[T]) ToSlice() []T {
-	panic("not implemented")
+	values := make([]T, len(s.items))
+	copy(values, s.items)
+	return values
 }
 
 // String renders the stack top first as "30 -> 20 -> 10 -> nil". O(n) time, O(n) space.
 func (s *Stack[T]) String() string {
-	panic("not implemented")
+	var b strings.Builder
+	for i := len(s.items) - 1; i >= 0; i-- {
+		fmt.Fprintf(&b, "%v -> ", s.items[i])
+	}
+	b.WriteString("nil")
+	return b.String()
 }
 
 // PrintStack writes String followed by a newline to standard output. O(n) time, O(n) space.
 func (s *Stack[T]) PrintStack() {
-	panic("not implemented")
+	fmt.Println(s.String())
 }
