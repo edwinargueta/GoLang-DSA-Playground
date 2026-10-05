@@ -98,8 +98,8 @@ GoLang-DSA-Playground/
 | Stack | 🟢 Complete | slice- and node-backed, min-stack |
 | Queue | 🟢 Complete | ring buffer, node-backed with head and tail |
 | Hash Table | 🟢 Complete | separate chaining, open addressing with tombstones, resize |
-| Heap / Priority Queue | ⚪ Planned | sift up/down, heapify, k-largest |
-| Graph | ⚪ Planned | BFS, DFS, topological sort, Dijkstra |
+| Heap / Priority Queue | 🟡 In progress | sift up/down, comparator ordering, heapify, k-largest |
+| Graph | 🟡 In progress | adjacency lists, BFS, DFS, cycle detection, topological sort, Dijkstra |
 | Sorting | ⚪ Planned | merge, quick, heap, counting |
 | Dynamic Programming | ⚪ Planned | memoization vs. tabulation, classic problems |
 
