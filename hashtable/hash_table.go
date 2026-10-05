@@ -1,6 +1,11 @@
 // Package hashtable implements hash tables from first principles, by separate chaining and by open addressing.
 package hashtable
 
+import (
+	"fmt"
+	"strings"
+)
+
 const (
 	// initialBuckets is the bucket count New starts with; every growth doubles it.
 	initialBuckets = 8
@@ -50,50 +55,131 @@ type HashTable[K comparable, V any] struct {
 
 // New returns an empty table that hashes its keys with hash. O(1) time, O(1) space.
 func New[K comparable, V any](hash func(K) uint64) *HashTable[K, V] {
-	panic("not implemented")
+	return &HashTable[K, V]{
+		buckets: make([]*entry[K, V], initialBuckets),
+		hash:    hash,
+	}
 }
 
 // Len returns the number of keys in the table. O(1) time, O(1) space.
 func (t *HashTable[K, V]) Len() int {
-	panic("not implemented")
+	return t.size
 }
 
 // Put stores value under key, reporting false if it overwrote an existing key; it grows the table when the load factor demands it. O(1) average time, O(n) worst case, O(1) space.
 func (t *HashTable[K, V]) Put(key K, value V) bool {
-	panic("not implemented")
+	if e := t.find(key); e != nil {
+		e.value = value
+		return false
+	}
+	if float64(t.size+1)/float64(len(t.buckets)) > maxLoadChained {
+		t.grow()
+	}
+	i := t.index(key)
+	t.buckets[i] = &entry[K, V]{key: key, value: value, next: t.buckets[i]}
+	t.size++
+	return true
 }
 
 // Get returns the value stored under key, comma-ok. O(1) average time, O(n) worst case, O(1) space.
 func (t *HashTable[K, V]) Get(key K) (V, bool) {
-	panic("not implemented")
+	if e := t.find(key); e != nil {
+		return e.value, true
+	}
+	var zero V
+	return zero, false
 }
 
 // Contains reports whether key is in the table. O(1) average time, O(n) worst case, O(1) space.
 func (t *HashTable[K, V]) Contains(key K) bool {
-	panic("not implemented")
+	return t.find(key) != nil
 }
 
 // Delete removes key, reporting whether it was there to remove. O(1) average time, O(n) worst case, O(1) space.
 func (t *HashTable[K, V]) Delete(key K) bool {
-	panic("not implemented")
+	for link := &t.buckets[t.index(key)]; *link != nil; link = &(*link).next {
+		if e := *link; e.key == key {
+			*link = e.next
+			e.next = nil
+			t.size--
+			return true
+		}
+	}
+	return false
 }
 
 // Keys returns every key in unspecified order, empty and non-nil for an empty table. O(n) time, O(n) space.
 func (t *HashTable[K, V]) Keys() []K {
-	panic("not implemented")
+	keys := make([]K, 0, t.size)
+	for _, head := range t.buckets {
+		for e := head; e != nil; e = e.next {
+			keys = append(keys, e.key)
+		}
+	}
+	return keys
 }
 
 // Values returns every value in unspecified order, with repeats, empty and non-nil for an empty table. O(n) time, O(n) space.
 func (t *HashTable[K, V]) Values() []V {
-	panic("not implemented")
+	values := make([]V, 0, t.size)
+	for _, head := range t.buckets {
+		for e := head; e != nil; e = e.next {
+			values = append(values, e.value)
+		}
+	}
+	return values
 }
 
 // String renders the buckets in index order as "0:[] 1:[b=2 a=1]". O(n) time, O(n) space.
 func (t *HashTable[K, V]) String() string {
-	panic("not implemented")
+	var b strings.Builder
+	for i, head := range t.buckets {
+		if i > 0 {
+			b.WriteByte(' ')
+		}
+		fmt.Fprintf(&b, "%d:[", i)
+		for e := head; e != nil; e = e.next {
+			if e != head {
+				b.WriteByte(' ')
+			}
+			fmt.Fprintf(&b, "%v=%v", e.key, e.value)
+		}
+		b.WriteByte(']')
+	}
+	return b.String()
 }
 
 // PrintTable writes String followed by a newline to standard output. O(n) time, O(n) space.
 func (t *HashTable[K, V]) PrintTable() {
-	panic("not implemented")
+	fmt.Println(t.String())
+}
+
+// index returns the bucket key hashes to. O(1) time, O(1) space.
+func (t *HashTable[K, V]) index(key K) int {
+	return int(t.hash(key) % uint64(len(t.buckets)))
+}
+
+// find returns the entry holding key, or nil. O(1) average time, O(n) worst case, O(1) space.
+func (t *HashTable[K, V]) find(key K) *entry[K, V] {
+	for e := t.buckets[t.index(key)]; e != nil; e = e.next {
+		if e.key == key {
+			return e
+		}
+	}
+	return nil
+}
+
+// grow doubles the bucket count and rehashes every entry into the new buckets. O(n) time, O(n) space.
+func (t *HashTable[K, V]) grow() {
+	old := t.buckets
+	t.buckets = make([]*entry[K, V], 2*len(old))
+	for _, head := range old {
+		for e := head; e != nil; {
+			next := e.next
+			i := t.index(e.key)
+			e.next = t.buckets[i]
+			t.buckets[i] = e
+			e = next
+		}
+	}
 }
